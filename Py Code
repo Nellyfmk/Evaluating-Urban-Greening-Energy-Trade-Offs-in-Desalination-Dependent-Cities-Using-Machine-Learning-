@@ -1,0 +1,272 @@
+import pandas as pd
+import numpy as np
+import sklearn
+
+from xgboost import XGBRegressor
+from sklearn.model_selection import train_test_split
+from sklearn.metrics import mean_squared_error, r2_score
+
+print("Scikit-learn version:", sklearn.__version__)
+
+df = pd.read_csv(r"C:\Users\Nelly\Downloads\Jeddah_NDVI_NDBI_LST_dataset.csv")
+
+print(df.head())
+print(df.columns)
+
+df = df.dropna()
+
+print(df.isnull().sum())
+
+X = df[["NDVI", "NDBI"]]
+y = df["LST"]
+
+X_train, X_test, y_train, y_test = train_test_split(
+    X,
+    y,
+    test_size=0.2,
+    random_state=42
+)
+
+model = XGBRegressor(
+    n_estimators=200,
+    max_depth=5,
+    learning_rate=0.1,
+    random_state=42
+)
+
+model.fit(X_train, y_train)
+
+pred = model.predict(X_test)
+
+mse = mean_squared_error(y_test, pred)
+rmse = np.sqrt(mse)
+
+r2 = r2_score(y_test, pred)
+
+print("RMSE:", rmse)
+print("R2:", r2)
+
+import matplotlib.pyplot as plt
+
+# FIGURE 1: NDVI Distribution
+plt.figure()
+plt.hist(df["NDVI"], bins=40)
+plt.title("NDVI Distribution in Jeddah")
+plt.xlabel("NDVI")
+plt.ylabel("Frequency")
+plt.savefig("Figure1_NDVI_Distribution.png", dpi=300, bbox_inches="tight")
+plt.show()
+
+
+# FIGURE 2: NDBI Distribution
+plt.figure()
+plt.hist(df["NDBI"], bins=40)
+plt.title("NDBI Distribution in Jeddah")
+plt.xlabel("NDBI")
+plt.ylabel("Frequency")
+plt.savefig("Figure2_NDBI_Distribution.png", dpi=300, bbox_inches="tight")
+plt.show()
+
+
+# FIGURE 3: NDVI vs LST
+plt.figure()
+plt.scatter(df["NDVI"], df["LST"], alpha=0.3)
+plt.title("NDVI vs Land Surface Temperature (Jeddah)")
+plt.xlabel("NDVI")
+plt.ylabel("LST (°C)")
+plt.savefig("Figure3_NDVI_vs_LST.png", dpi=300, bbox_inches="tight")
+plt.show()
+
+
+# FIGURE 4: Actual vs Predicted LST
+plt.figure()
+plt.scatter(y_test, pred, alpha=0.4)
+
+plt.plot(
+    [y_test.min(), y_test.max()],
+    [y_test.min(), y_test.max()]
+)
+
+plt.title("XGBoost Model Performance")
+plt.xlabel("Actual LST (°C)")
+plt.ylabel("Predicted LST (°C)")
+plt.savefig("Figure4_Actual_vs_Predicted.png", dpi=300, bbox_inches="tight")
+plt.show()
+
+print("\nNDVI Statistics")
+print(df["NDVI"].describe())
+
+print(df.columns)
+
+import numpy as np
+import matplotlib.pyplot as plt
+
+desal_energy_intensity = 4.0
+
+ndvi_min = df["NDVI"].min()
+ndvi_max = df["NDVI"].max()
+
+df["FVC"] = (df["NDVI"] - ndvi_min) / (ndvi_max - ndvi_min)
+
+df["FVC"] = df["FVC"].clip(0, 1)
+
+print("\nFVC Statistics")
+print(df["FVC"].describe())
+
+scenarios = np.array([
+    0.05,
+    0.10,
+    0.15,
+    0.20,
+    0.25,
+    0.30,
+    0.35,
+    0.40,
+    0.45,
+    0.50
+])
+
+ndbi_mean = df["NDBI"].mean()
+
+baseline_lst = model.predict(
+    np.array([[df["NDVI"].mean(), ndbi_mean]])
+)[0]
+
+predicted_lsts = []
+
+for fvc in scenarios:
+
+    
+    ndvi_scenario = ndvi_min + fvc * (ndvi_max - ndvi_min)
+
+    predicted_lst = model.predict(
+        np.array([[ndvi_scenario, ndbi_mean]])
+    )[0]
+
+    predicted_lsts.append(predicted_lst)
+
+predicted_lsts = np.array(predicted_lsts)
+
+
+delta_T = baseline_lst - predicted_lsts
+
+w0 = 200 
+
+water_demand = scenarios * w0
+
+energy_costs = water_demand * desal_energy_intensity
+
+alpha = 10  # empirical scaling coefficient
+
+cooling_energy_equivalent = delta_T * alpha
+
+NEGI = cooling_energy_equivalent - energy_costs
+
+# FIGURE 5 : Cooling Benefit vs Energy Cost
+plt.figure()
+
+plt.plot(
+    scenarios * 100,
+    cooling_energy_equivalent,
+    marker="o",
+    label="Cooling Energy Savings"
+)
+
+plt.plot(
+    scenarios * 100,
+    energy_costs,
+    marker="s",
+    label="Desalination Energy Cost"
+)
+
+plt.xlabel("Fractional Vegetation Cover (%)")
+plt.ylabel("Energy")
+plt.title("Cooling Benefit vs Desalination Energy Consumption")
+plt.legend()
+
+plt.savefig(
+    "Figure5_Cooling_vs_Energy.png",
+    dpi=300,
+    bbox_inches="tight"
+)
+
+plt.show()
+
+# FIGURE 6: NEGI Curve
+plt.figure()
+
+plt.plot(
+    scenarios * 100,
+    NEGI,
+    marker="o"
+)
+
+plt.axhline(
+    0,
+    linestyle="--"
+)
+
+plt.xlabel("Fractional Vegetation Cover (%)")
+plt.ylabel("NEGI")
+plt.title("Net Energy Gain Index")
+
+plt.savefig(
+    "Figure6_NEGI_Curve.png",
+    dpi=300,
+    bbox_inches="tight"
+)
+
+plt.show()
+
+# FIGURE 7: Optimal Threshold
+optimal_index = np.argmax(NEGI)
+
+optimal_fvc = scenarios[optimal_index] * 100
+
+plt.figure()
+
+plt.plot(
+    scenarios * 100,
+    NEGI,
+    marker="o"
+)
+
+plt.axvline(
+    optimal_fvc,
+    linestyle="--",
+    label=f"Optimal = {optimal_fvc:.1f}%"
+)
+
+plt.axhline(
+    0,
+    linestyle="--"
+)
+
+plt.xlabel("Fractional Vegetation Cover (%)")
+plt.ylabel("NEGI")
+plt.title("Optimal Vegetation Threshold")
+
+plt.legend()
+
+plt.savefig(
+    "Figure7_Optimal_Threshold.png",
+    dpi=300,
+    bbox_inches="tight"
+)
+
+plt.show()
+
+print("\n=== NEGI RESULTS ===")
+print("Optimal Vegetation Threshold (% FVC):", round(optimal_fvc, 2))
+
+print("\nFVC scenarios:")
+print(scenarios)
+
+print("\nCooling Energy:")
+print(cooling_energy_equivalent)
+
+print("\nDesalination Energy:")
+print(energy_costs)
+
+print("\nNEGI:")
+print(NEGI)
