@@ -36,14 +36,19 @@ The framework evaluates the net energy implications of urban greening by integra
 
 ## Repository Structure
 ```
-.
+NEGI-Framework/
+│
+├── gee/
+│   └── landsat_preprocessing.js
+│
 ├── data/
-│   ├── Jeddah_NDVI_NDBI_LST_dataset.csv
-│   
+│   └── Jeddah_NDVI_NDBI_LST_dataset.csv
+│
 ├── src/
 │   └── negi_framework.py
-├── requirements.txt
+│
 ├── README.md
+├── requirements.txt
 ├── LICENSE
 ├── CITATION.cff
 └── .gitignore
