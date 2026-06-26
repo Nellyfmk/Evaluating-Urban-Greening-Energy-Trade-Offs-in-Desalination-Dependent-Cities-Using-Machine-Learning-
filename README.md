@@ -39,8 +39,7 @@ The framework evaluates the net energy implications of urban greening by integra
 .
 ├── data/
 │   ├── Jeddah_NDVI_NDBI_LST_dataset.csv
-│   ├── Scenario_Results.csv
-│   └── Sensitivity_Analysis.csv
+│   
 ├── src/
 │   └── negi_framework.py
 ├── requirements.txt
