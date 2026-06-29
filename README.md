@@ -59,6 +59,9 @@ NEGI-Framework/
 ├── src/
 │   └── negi_framework.py
 │
+├── figures/
+│   └── graphical_abstract.jpg
+│
 ├── README.md
 ├── requirements.txt
 ├── LICENSE
