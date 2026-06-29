@@ -1,40 +1,48 @@
-# NEGI Framework
+# NEGI Framework: Remote Sensing and Machine Learning for Urban Greening Energy Assessment
 
-This repository contains the Python implementation accompanying the manuscript:
+![Python](https://img.shields.io/badge/Python-3.10+-blue)
+![License](https://img.shields.io/badge/License-MIT-green)
 
-> **A Remote Sensing and Machine Learning Framework for Evaluating Urban Greening Energy Trade-Offs in Desalination-Dependent Cities**
+## Overview
 
-The framework evaluates the net energy implications of urban greening by integrating satellite remote sensing, machine learning, and desalination-related energy assessment. Using **Jeddah, Saudi Arabia**, as a case study, the methodology combines Landsat 8 observations, XGBoost regression, and scenario analysis to identify vegetation levels that maximize relative net energy performance.
+**NEGI Framework** is an open-source Python workflow accompanying the manuscript:
+
+> **Evaluating Urban Greening Energy Trade-Offs in Desalination-Dependent Cities Using Machine Learning and the Net Energy Gain Index (NEGI)**
+
+The framework evaluates the energy implications of urban greening in desalination-dependent cities by integrating satellite remote sensing, machine learning, and comparative energy assessment. Using **Jeddah, Saudi Arabia**, as a case study, the workflow combines Landsat 8 observations, XGBoost regression, and scenario-based analysis to identify vegetation levels that maximize relative net energy performance.
 
 ---
 
-## Features
+# Features
 
 * Landsat 8 preprocessing using Google Earth Engine
 * Extraction of NDVI, NDBI, and Land Surface Temperature (LST)
 * XGBoost regression for urban thermal prediction
-* Fractional Vegetation Cover (FVC) scenario simulation
-* Desalination-related energy assessment using SWRO energy intensity
+* Fractional Vegetation Cover (FVC) scenario analysis
+* Comparative assessment of vegetation cooling and desalination-related irrigation energy
 * Net Energy Gain Index (NEGI) computation
-* Sensitivity analysis of model parameters
-* Automatic generation of publication-ready figures and tables
+* Sensitivity analysis of empirical scaling coefficients
+* Automatic generation of publication-ready figures and CSV outputs
 
 ---
 
-## Methodological Workflow
+# Methodological Workflow
 
 1. Acquire Landsat 8 imagery using Google Earth Engine.
 2. Derive NDVI, NDBI, and Land Surface Temperature (LST).
 3. Train an XGBoost regression model using NDVI and NDBI.
-4. Simulate urban greening scenarios using Fractional Vegetation Cover (FVC).
-5. Estimate relative cooling-energy benefits.
-6. Estimate desalination-related irrigation energy requirements.
-7. Compute the Net Energy Gain Index (NEGI).
-8. Identify the vegetation threshold that maximizes relative net energy performance.
+4. Evaluate model performance using R², RMSE, and 5-fold cross-validation.
+5. Simulate urban greening scenarios using Fractional Vegetation Cover (FVC).
+6. Estimate vegetation-induced cooling benefits.
+7. Estimate desalination-related irrigation energy requirements.
+8. Compute the Net Energy Gain Index (NEGI).
+9. Identify vegetation thresholds that maximize relative net energy performance.
+10. Perform sensitivity analysis of the empirical scaling coefficients.
 
 ---
 
-## Repository Structure
+# Repository Structure
+
 ```
 NEGI-Framework/
 │
@@ -42,7 +50,12 @@ NEGI-Framework/
 │   └── landsat_preprocessing.js
 │
 ├── data/
-│   └── Jeddah_NDVI_NDBI_LST_dataset.csv
+│   ├── Jeddah_NDVI_NDBI_LST_dataset.csv
+│   ├── Scenario_Results.csv
+│   └── Sensitivity_Analysis.csv
+│
+├── plots/
+│   └── Publication figures
 │
 ├── src/
 │   └── negi_framework.py
@@ -56,17 +69,11 @@ NEGI-Framework/
 
 ---
 
-## Requirements
+# Installation
 
-Python 3.10 or later
+The workflow requires **Python 3.10** (or later).
 
-Required packages are listed in:
-
-```
-requirements.txt
-```
-
-Install all dependencies using:
+Install all required packages using
 
 ```bash
 pip install -r requirements.txt
@@ -74,50 +81,85 @@ pip install -r requirements.txt
 
 ---
 
-## Running the Code
+# Running the Code
 
-Execute the complete workflow with:
+Execute the complete workflow using
 
 ```bash
-python negi_framework.py
+python src/negi_framework.py
 ```
 
-The script performs:
+The script automatically performs:
 
 * Data loading
-* Machine learning model training
-* Model evaluation
-* Scenario simulation
-* NEGI calculation
+* Model training
+* Model validation
+* Feature importance analysis
+* Urban greening scenario simulation
+* NEGI computation
 * Sensitivity analysis
 * Figure generation
+* Export of CSV result files
 
 ---
 
-## Data
+# Outputs
+
+Running the workflow automatically generates:
+
+* XGBoost model evaluation metrics
+* Feature importance analysis
+* Urban greening scenario results
+* Net Energy Gain Index (NEGI)
+* Sensitivity analysis results
+* Publication-ready figures
+* CSV files containing scenario and sensitivity results
+
+---
+
+# Data
 
 Satellite observations were derived from **Landsat 8** imagery processed using **Google Earth Engine**.
 
-The processed dataset contains approximately **15,000 observations**, including:
+The processed dataset contains approximately **15,000 randomly sampled observations**, including:
 
-* NDVI
-* NDBI
+* Normalized Difference Vegetation Index (NDVI)
+* Normalized Difference Built-up Index (NDBI)
 * Land Surface Temperature (LST)
 
 ---
 
-## Reproducibility
+# Reproducibility
 
-This repository contains the code used to generate the analyses, figures, and tables presented in the accompanying manuscript. The workflow is fully reproducible using the processed dataset included in the repository.
+This repository contains the complete implementation used to generate the analyses, figures, tables, and scenario results presented in the accompanying manuscript.
 
----
-
-## Citation
-
-If you use this repository, please cite the accompanying publication once available.
+Running the supplied workflow with the included processed dataset reproduces the reported model evaluation, scenario analysis, sensitivity analysis, and publication figures.
 
 ---
 
-## License
+# Citation
 
-This repository is released under the MIT License.
+If you use this repository in your research, please cite the accompanying publication once available.
+
+GitHub will automatically generate a citation from the included **CITATION.cff** file.
+
+---
+
+# License
+
+This project is released under the **MIT License**.
+
+See the **LICENSE** file for details.
+
+---
+
+# Contact
+
+**Nelly F. Almaktoum**
+
+King Abdulaziz University
+
+📧 **Email:** [scifinel@gmail.com](mailto:scifinel@gmail.com)
+
+🔗 **ORCID:** [https://orcid.org/0009-0007-9887-0280](https://orcid.org/0009-0007-9887-0280)
+
